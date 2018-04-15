@@ -1,6 +1,6 @@
 NASM           = nasm
-NASM_FLAGS     = -f bin
-STAGE1_SOURCES = ../src/bootloader.asm
+NASM_FLAGS     = -w-orphan-labels -f bin 
+STAGE1_SOURCES = ../src/stage1.asm
 STAGE2_SOURCES = ../src/stage2.asm
 STAGE1         = bootloader.bin
 STAGE2         = STAGE2.SYS
