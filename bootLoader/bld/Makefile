@@ -1,19 +1,24 @@
-NASM       = nasm
-NASM_FLAGS = -f bin
-SOURCES    = ../src/bootloader.asm
-FINAL      = bootloader.bin
-BOOT_IMG   = bootloader.img
-BIN        = ../bin
+NASM           = nasm
+NASM_FLAGS     = -f bin
+STAGE1_SOURCES = ../src/bootloader.asm
+STAGE2_SOURCES = ../src/stage2.asm
+STAGE1         = bootloader.bin
+STAGE2         = STAGE2.SYS
+BOOT_IMG       = bootloader.img
+BIN            = ../bin
 
-all: $(BIN) $(SOURCES) $(FINAL)
+all: $(BIN) $(STAGE1_SOURCES) $(STAGE1) $(STAGE2_SOURCES) $(STAGE2)
 
 $(BIN):
 	mkdir -p $@
 
-$(FINAL):
-	$(NASM) $(NASM_FLAGS) $(SOURCES) -o $(BIN)/$(FINAL)
+$(STAGE1):
+	$(NASM) $(NASM_FLAGS) $(STAGE1_SOURCES) -o $(BIN)/$(STAGE1)
 	sudo dd if=/dev/zero of=$(BIN)/$(BOOT_IMG) bs=512 count=2880
-	sudo dd status=noxfer conv=notrunc if=$(BIN)/$(FINAL) of=$(BIN)/$(BOOT_IMG)
+	sudo dd status=noxfer conv=notrunc if=$(BIN)/$(STAGE1) of=$(BIN)/$(BOOT_IMG)
+
+$(STAGE2):
+	$(NASM) $(NASM_FLAGS) $(STAGE2_SOURCES) -o $(BIN)/$(STAGE2)
 
 clean:
 	rm -rf $(BIN)
