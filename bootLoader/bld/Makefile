@@ -1,5 +1,5 @@
 NASM           = nasm
-NASM_FLAGS     = -w-orphan-labels -f bin 
+NASM_FLAGS     = -w-orphan-labels -f bin
 STAGE1_SOURCES = ../src/stage1.asm
 STAGE2_SOURCES = ../src/stage2.asm
 STAGE1         = bootloader.bin
@@ -30,6 +30,15 @@ clean:
 
 # Now copy the bin file content to the image file
 # sudo dd status=noxfer conv=notrunc if=bootloader.bin of=bootloader.img
+
+# mount the bootload.img
+# sudo mount -o loop bootloader.img /media/floppy/
+
+# copy the second stage to the mounted image
+# cp STAGE2.SYS /media/floppy/
+
+# unount the image
+# sudo umount /media/floppy
 
 # run with
 # qemu-system-x86_64 bootloader.bin
