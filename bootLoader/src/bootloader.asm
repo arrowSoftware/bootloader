@@ -49,7 +49,7 @@ Print:
     or  al, al      ; Does AL = 0
     jz  PrintDone   ; yes, null terminator found, leave now
     mov ah, 0eh     ; No, print the character
-    int 0x10        ; INT 0x10 - VIDEO TELETYPE OUTPUT
+    int 0x10        ; INTERRUPT 0x10 - VIDEO TELETYPE OUTPUT
                         ; AH = 0x0E
                         ; AL = Character to write
                         ; BH - Page Number (Should be 0)
@@ -72,7 +72,7 @@ loader:
     call Print      ; Call the print function
 
     xor ax, ax      ; Clear AX.
-    int 0x12        ; INT 0x12 - BIOS GET MEMORY SIZE
+    int 0x12        ; INTERRUPT 0x12 - BIOS GET MEMORY SIZE
                         ; Returns: AX = Kilobytes of contiguous memory starting from
                         ; absolute address 0x0. Get the amount of KB from the BIOS
 
