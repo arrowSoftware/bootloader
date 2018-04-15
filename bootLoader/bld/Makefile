@@ -1,6 +1,6 @@
 NASM       = nasm
 NASM_FLAGS = -f bin
-SOURCES    = ../src/boot1.asm
+SOURCES    = ../src/bootloader.asm
 FINAL      = bootloader.bin
 BOOT_IMG   = bootloader.img
 BIN        = ../bin
@@ -28,3 +28,5 @@ clean:
 
 # run with
 # qemu-system-x86_64 bootloader.bin
+# or
+# sudo qemu-system-x86_64 -drive format=raw,index=0,if=floppy,file=bootloader.img

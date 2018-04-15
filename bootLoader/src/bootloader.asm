@@ -12,9 +12,71 @@ org 0x7C00              ; We are loaded by BIOS at 0x7C00.
 ; to 1 MB (+64k) of memory.
 bits    16              ; We are still in 16 bit real mode.
 
-Start:
-    cli                 ; Clear all interrupts.
-    hlt                 ; Halt the system.
+Start:  jmp loader      ; Jump over OEM block
+
+;*******************************************************************************
+; OEM Parameter block
+;*******************************************************************************
+bpbOEM	db "BabyGirl"	           ; This member must be exactally 8 bytes. It
+                                   ; is the name of the OS
+bpbBytesPerSector:  	DW 512
+bpbSectorsPerCluster: 	DB 1
+bpbReservedSectors: 	DW 1
+bpbNumberOfFATs: 	    DB 2
+bpbRootEntries: 	    DW 224
+bpbTotalSectors: 	    DW 2880
+bpbMedia: 	            DB 0xF0
+bpbSectorsPerFAT: 	    DW 9
+bpbSectorsPerTrack: 	DW 18
+bpbHeadsPerCylinder: 	DW 2
+bpbHiddenSectors: 	    DD 0
+bpbTotalSectorsBig:     DD 0
+bsDriveNumber: 	        DB 0
+bsUnused: 	            DB 0
+bsExtBootSignature: 	DB 0x29
+bsSerialNumber:	        DD 0xa0a1a2a3
+bsVolumeLabel: 	        DB "FLOPPY "
+bsFileSystem: 	        DB "FAT12   "
+welcome db "Welcome to the Operating System: ", 0 ; The string to print.
+
+;*******************************************************************************
+; Prints a string
+; DS=>SI: 0 terminated string
+;*******************************************************************************
+Print:
+    lodsb           ; Load next byte from string from SI to AL
+    or  al, al      ; Does AL = 0
+    jz  PrintDone   ; yes, null terminator found, leave now
+    mov ah, 0eh     ; No, print the character
+    int 0x10        ; INT 0x10 - VIDEO TELETYPE OUTPUT
+                        ; AH = 0x0E
+                        ; AL = Character to write
+                        ; BH - Page Number (Should be 0)
+                        ; BL = Foreground color (Graphics Modes Only)
+    jmp Print       ; Repeat until null terminator found
+
+PrintDone:
+    ret             ; We are done, return now.
+
+loader:
+    xor	ax, ax      ; Setup segments to insure they are 0. Remember that
+    mov	ds, ax      ; we have ORG 0x7C00. This means all addresses are based
+    mov	es, ax      ; from 0x7C00:0. Because the data segments are within the same
+                    ; code segment, null them.
+
+    mov si, welcome ; the message to print.
+    call Print      ; Call the print function
+
+    mov si, bpbOEM
+    call Print
+
+    xor ax, ax      ; Clear AX.
+    int 0x12        ; INT 0x12 - BIOS GET MEMORY SIZE
+                    ; Returns: AX = Kilobytes of contiguous memory starting from
+                    ; absolute address 0x0. Get the amount of KB from the BIOS
+
+    cli             ; Clear all interrupts
+    hlt             ; Halt the system
 
 ; NASM, the dollar operator ($) represents the address of the current line.
 ; $$ represents the address of the first instruction (Should be 0x7C00). So,
