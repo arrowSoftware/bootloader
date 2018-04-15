@@ -17,27 +17,28 @@ Start:  jmp loader      ; Jump over OEM block
 ;*******************************************************************************
 ; OEM Parameter block
 ;*******************************************************************************
-bpbOEM	db "BabyGirl"	           ; This member must be exactally 8 bytes. It
-                                   ; is the name of the OS
-bpbBytesPerSector:  	DW 512
-bpbSectorsPerCluster: 	DB 1
-bpbReservedSectors: 	DW 1
-bpbNumberOfFATs: 	    DB 2
-bpbRootEntries: 	    DW 224
-bpbTotalSectors: 	    DW 2880
-bpbMedia: 	            DB 0xF0
-bpbSectorsPerFAT: 	    DW 9
-bpbSectorsPerTrack: 	DW 18
-bpbHeadsPerCylinder: 	DW 2
-bpbHiddenSectors: 	    DD 0
-bpbTotalSectorsBig:     DD 0
-bsDriveNumber: 	        DB 0
-bsUnused: 	            DB 0
-bsExtBootSignature: 	DB 0x29
-bsSerialNumber:	        DD 0xa0a1a2a3
-bsVolumeLabel: 	        DB "FLOPPY "
-bsFileSystem: 	        DB "FAT12   "
 welcome db "Welcome to the Operating System: ", 0 ; The string to print.
+bpbOEM  db "BabyGirl" ; This member must be exactally 8 bytes. Tt is the name of
+                      ; the OS
+
+bpbBytesPerSector:    DW 512
+bpbSectorsPerCluster: DB 1
+bpbReservedSectors:   DW 1
+bpbNumberOfFATs:      DB 2
+bpbRootEntries:       DW 224
+bpbTotalSectors:      DW 2880
+bpbMedia:             DB 0xF0
+bpbSectorsPerFAT:     DW 9
+bpbSectorsPerTrack:   DW 18
+bpbHeadsPerCylinder:  DW 2
+bpbHiddenSectors:     DD 0
+bpbTotalSectorsBig:   DD 0
+bsDriveNumber:        DB 0
+bsUnused:             DB 0
+bsExtBootSignature:   DB 0x29
+bsSerialNumber:       DD 0xa0a1a2a3
+bsVolumeLabel:        DB "FLOPPY "
+bsFileSystem:         DB "FAT12   "
 
 ;*******************************************************************************
 ; Prints a string
@@ -59,21 +60,21 @@ PrintDone:
     ret             ; We are done, return now.
 
 loader:
-    xor	ax, ax      ; Setup segments to insure they are 0. Remember that
-    mov	ds, ax      ; we have ORG 0x7C00. This means all addresses are based
-    mov	es, ax      ; from 0x7C00:0. Because the data segments are within the same
+    xor    ax, ax   ; Setup segments to insure they are 0. Remember that
+    mov    ds, ax   ; we have ORG 0x7C00. This means all addresses are based
+    mov    es, ax   ; from 0x7C00:0. Because the data segments are within the same
                     ; code segment, null them.
 
-    mov si, welcome ; the message to print.
+    mov si, welcome ; The welcome message to print.
     call Print      ; Call the print function
 
-    mov si, bpbOEM
-    call Print
+    mov si, bpbOEM  ; The OS name to print
+    call Print      ; Call the print function
 
     xor ax, ax      ; Clear AX.
     int 0x12        ; INT 0x12 - BIOS GET MEMORY SIZE
-                    ; Returns: AX = Kilobytes of contiguous memory starting from
-                    ; absolute address 0x0. Get the amount of KB from the BIOS
+                        ; Returns: AX = Kilobytes of contiguous memory starting from
+                        ; absolute address 0x0. Get the amount of KB from the BIOS
 
     cli             ; Clear all interrupts
     hlt             ; Halt the system
@@ -91,4 +92,4 @@ times 510 - ($-$$) db 0 ; We have to be 512 bytes, clear the rest of the bytes
 ; boot signiture must be the last two bytes in the bootsector, We use the times
 ; keyword to calculate the size different to fill in up to the 510th byte,
 ; rather then the 512th byte.
-dw 0xAA55               ; Boot signature.
+dw 0xAA55 ; Boot signature.
