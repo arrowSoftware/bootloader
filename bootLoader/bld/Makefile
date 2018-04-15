@@ -19,6 +19,9 @@ $(STAGE1):
 
 $(STAGE2):
 	$(NASM) $(NASM_FLAGS) $(STAGE2_SOURCES) -o $(BIN)/$(STAGE2)
+	sudo mount -o loop $(BIN)/$(BOOT_IMG) /media/floppy/
+	sudo cp $(BIN)/$(STAGE2) /media/floppy/
+	sudo umount /media/floppy
 
 clean:
 	rm -rf $(BIN)

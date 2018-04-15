@@ -38,3 +38,5 @@ or ( Better option )
 ```
 sudo qemu-system-x86_64 -drive format=raw,index=0,if=floppy,file=bootloader.img
 ```
+
+![Alt text](/operatingSystem/screenshots/bootloader_Screenshot_2018-04-15_04-01-10.png?raw=true "Bootloader 2 stage")
